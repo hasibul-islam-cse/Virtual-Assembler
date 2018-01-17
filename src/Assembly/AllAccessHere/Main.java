@@ -1,5 +1,7 @@
-package Assembly.AllAccess;
+package Assembly.AllAccessHere;
 
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 /*
  * Author:~ Hasibul Islam
  * Department of Computer Science and Technology
@@ -12,9 +14,12 @@ import Assembly.Instruction.MainHead;
 import Assembly.Instruction.InstructionGenerator;
 
 public class Main {
-	private static Scanner sc;
-	private static MainHead mainmenu;
-	private static InstructionGenerator insgen;
+	public static Scanner sc;
+	public static MainHead mainmenu;
+	public static InstructionGenerator insgen;
+	private static SourceMenu srcmenu;
+	private static HelpMenu hlpmenu;
+	private static DebugMenu debugmenu;
 	
 	/* VARIABLE DECLARATION PART */
 	static int MemoryAddress , PrimaryMemoryAddress, CodeGeneratorFlag;
@@ -25,7 +30,7 @@ public class Main {
 	public static int ax, bx, cx, dx;
 	
 	/* Method Declaration Part*/
-	private static void CodeGenerator(){ 
+	public static void CodeGenerator(){ 
 		/*
 		 * This Method Filter out Instruction
 		 * to Complete Every Instruction task 
@@ -75,7 +80,7 @@ public class Main {
 		}
 	}
 	
-	private static void ReadCode(){
+	private static void ReadCode() throws FileNotFoundException, UnsupportedEncodingException{
 		/*
 		 * This method's task is to 
 		 * Read Program code from user
@@ -125,17 +130,30 @@ public class Main {
 		return 0;
 	}
 	
-	private static int MainMenuTask(String HeaderInstruction){
+	public static int MainMenuTask(String HeaderInstruction) throws FileNotFoundException, UnsupportedEncodingException{
 		if (HeaderInstruction.equals("Assembly") || HeaderInstruction.equals("assembly") || HeaderInstruction.equals("ASSEMBLY")){
 			/*
 			 * If user want to write code
 			 * or,
 			 * Write instruction is Called
 			 */
+			ax =0; bx=0; cx=0; dx=0;
 			ReadCode();
+		}
+		else if (HeaderInstruction.equals("Source") || HeaderInstruction.equals("source") || HeaderInstruction.endsWith("SOURCE")) {
+			srcmenu.PrintOutSource();
+			return MainMenuTask(mainmenu.HeaderMain());
+		}
+		else if (HeaderInstruction.equals("Debug") || HeaderInstruction.equals("debug") || HeaderInstruction.equals("DEBUG")) {
+			debugmenu.Debugger();
+			return MainMenuTask(mainmenu.HeaderMain());
 		}
 		else if (HeaderInstruction.equals("Run") || HeaderInstruction.equals("run") || HeaderInstruction.equals("RUN")){
 			Run();
+			return MainMenuTask(mainmenu.HeaderMain());
+		}
+		else if (HeaderInstruction.equals("Help") || HeaderInstruction.equals("help") || HeaderInstruction.equals("HELP")) {
+			hlpmenu.Help();
 			return MainMenuTask(mainmenu.HeaderMain());
 		}
 		else if (HeaderInstruction.equals("Exit") || HeaderInstruction.equals("exit") || HeaderInstruction.equals("EXIT")){
@@ -147,8 +165,7 @@ public class Main {
 			 * User can not write code
 			 * or use it without open it again.
 			 */
-			JOptionPane.showMessageDialog(null, "Thank You.\non behalf of Computer Science.", "GoodBye", JOptionPane.PLAIN_MESSAGE);
-			System.gc();
+			JOptionPane.showMessageDialog(null, "Thank You.\non behalf of Computer Science (DPI).", "GoodBye", JOptionPane.PLAIN_MESSAGE);
 			return 0;
 		}
 		else{
@@ -156,13 +173,13 @@ public class Main {
 			 * If menu instruction mismatched
 			 * System will want menu again.
 			 */
-			JOptionPane.showMessageDialog(null, "Sorry,\nError Occured.", "Attention", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Sorry,\nWrong Menu Choosen.", "Attention", JOptionPane.ERROR_MESSAGE);
 			return MainMenuTask(mainmenu.HeaderMain());
 		}
 		return 0;
 	}
 	
-	public static void main(String[] args){
+	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException{
 		/*
 		 * This is Main function
 		 * Where the author of this 
@@ -171,7 +188,10 @@ public class Main {
 		sc = new Scanner(System.in);
 		mainmenu = new MainHead();
 		insgen = new InstructionGenerator();
-		
+		srcmenu = new SourceMenu();
+		hlpmenu = new HelpMenu();
+		debugmenu = new DebugMenu();
+		System.out.println("Welcome to Virtual Assembler.\nAn IDE for Assembly. Version: 1.1 (Testing).");
 		MainMenuTask(mainmenu.HeaderMain()); //This is call and print Header Menu
 	}
 }
